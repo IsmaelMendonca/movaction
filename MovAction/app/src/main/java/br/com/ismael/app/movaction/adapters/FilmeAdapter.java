@@ -81,7 +81,7 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
         holder.mCvFilmes.setOnClickListener(v -> {
             FilmePopular dados = (FilmePopular) v.getTag();
             Intent detalhes = new Intent(mContext, DetailActivity.class);
-            detalhes.putExtra("filme", dados);
+            detalhes.putExtra("filmeId", dados.getId());
             mContext.startActivity(detalhes);
         });
     }

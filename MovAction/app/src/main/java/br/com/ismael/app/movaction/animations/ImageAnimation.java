@@ -45,13 +45,12 @@ public class ImageAnimation {
         }
 
         imagemComZoom.setVisibility(View.VISIBLE);
+        miniatura.setAlpha(0f);
 
         imagemComZoom.setPivotX(0f);
         imagemComZoom.setPivotY(0f);
 
         AnimatorSet set = new AnimatorSet();
-
-        miniatura.setAlpha(0f);
 
         set.play(ObjectAnimator.ofFloat(imagemComZoom, View.X,
                         startBounds.left, finalBounds.left))
@@ -78,45 +77,42 @@ public class ImageAnimation {
         mCurrentAnimator = set;
 
         final float startScaleFinal = startScale;
-        imagemComZoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCurrentAnimator != null) {
-                    mCurrentAnimator.cancel();
+        imagemComZoom.setOnClickListener(view -> {
+            if (mCurrentAnimator != null) {
+                mCurrentAnimator.cancel();
+            }
+
+            AnimatorSet set1 = new AnimatorSet();
+            set1.play(ObjectAnimator
+                    .ofFloat(imagemComZoom, View.X, startBounds.left))
+                    .with(ObjectAnimator
+                            .ofFloat(imagemComZoom,
+                                    View.Y,startBounds.top))
+                    .with(ObjectAnimator
+                            .ofFloat(imagemComZoom,
+                                    View.SCALE_X, startScaleFinal))
+                    .with(ObjectAnimator
+                            .ofFloat(imagemComZoom,
+                                    View.SCALE_Y, startScaleFinal));
+            set1.setDuration(200);
+            set1.setInterpolator(new DecelerateInterpolator());
+            set1.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    miniatura.setAlpha(1f);
+                    imagemComZoom.setVisibility(View.GONE);
+                    mCurrentAnimator = null;
                 }
 
-                AnimatorSet set = new AnimatorSet();
-                set.play(ObjectAnimator
-                        .ofFloat(imagemComZoom, View.X, startBounds.left))
-                        .with(ObjectAnimator
-                                .ofFloat(imagemComZoom,
-                                        View.Y,startBounds.top))
-                        .with(ObjectAnimator
-                                .ofFloat(imagemComZoom,
-                                        View.SCALE_X, startScaleFinal))
-                        .with(ObjectAnimator
-                                .ofFloat(imagemComZoom,
-                                        View.SCALE_Y, startScaleFinal));
-                set.setDuration(200);
-                set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        miniatura.setAlpha(1f);
-                        imagemComZoom.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        miniatura.setAlpha(1f);
-                        imagemComZoom.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-                });
-                set.start();
-                mCurrentAnimator = set;
-            }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    miniatura.setAlpha(1f);
+                    imagemComZoom.setVisibility(View.GONE);
+                    mCurrentAnimator = null;
+                }
+            });
+            set1.start();
+            mCurrentAnimator = set1;
         });
     }
 }

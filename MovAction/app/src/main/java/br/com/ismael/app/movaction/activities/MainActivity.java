@@ -3,6 +3,7 @@ package br.com.ismael.app.movaction.activities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import br.com.ismael.app.movaction.listeners.EndlessRecyclerViewScrollListener;
 import br.com.ismael.app.movaction.models.FilmePopular;
 import br.com.ismael.app.movaction.models.MaisPopulares;
 import br.com.ismael.app.movaction.services.PermissoesService;
-import br.com.ismael.app.movaction.services.callbacks.MaisPopularesCallback;
+import br.com.ismael.app.movaction.services.callbacks.GenericCallback;
 import br.com.ismael.app.movaction.services.contracts.IFilmesService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +39,9 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.pb_carregando)
     ProgressBar mProgressBar;
+
+    @BindView(R.id.iv_imagem_zoom)
+    ImageView mImagemZoom;
 
     @Inject
     IFilmesService mFilmesService;
@@ -76,7 +80,7 @@ public class MainActivity extends BaseActivity {
             mFilmePopularList = new ArrayList<>();
         }
 
-        mFilmesService.obterMaisPopulares(paginaAtual + 1, new MaisPopularesCallback() {
+        mFilmesService.obterMaisPopulares(paginaAtual + 1, new GenericCallback<MaisPopulares>() {
             @Override
             public void onResponse(Call<MaisPopulares> call, Response<MaisPopulares> response) {
                 if(response.body() == null ||
@@ -113,6 +117,15 @@ public class MainActivity extends BaseActivity {
                 Log.e("RequestException", t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mImagemZoom.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     @Override
