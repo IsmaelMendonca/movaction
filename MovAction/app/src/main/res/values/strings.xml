@@ -1,0 +1,10 @@
+<resources>
+    <string name="nome_app">MovAction</string>
+    <string name="alert_button_ok">OK</string>
+    <string name="alert_realizando_requisicao">Aguarde alguns instantes!</string>
+    <string name="alert_carregando">Carregando...</string>
+    <string name="iv_poster">Poster</string>
+    <string name="iv_zoom_imagem">Imagem com Zoom</string>
+    <string name="tv_data_lancamento_label">Data de Lançamento:</string>
+    <string name="iv_painel">Painel</string>
+</resources>
