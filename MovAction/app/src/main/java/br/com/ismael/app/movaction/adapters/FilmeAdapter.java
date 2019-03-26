@@ -123,6 +123,8 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
                     } else {
                         holder.mIvFavorito.setImageResource(R.drawable.ic_star);
                     }
+
+                    holder.mIvFavorito.setVisibility(View.VISIBLE);
                 });
 
         asyncTask.execute(FilmeFavoritoEnum.findByFilmeId);
