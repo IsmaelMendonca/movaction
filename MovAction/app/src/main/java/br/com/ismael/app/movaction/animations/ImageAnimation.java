@@ -44,9 +44,6 @@ public class ImageAnimation {
             startBounds.bottom += deltaHeight;
         }
 
-        imagemComZoom.setVisibility(View.VISIBLE);
-        miniatura.setAlpha(0f);
-
         imagemComZoom.setPivotX(0f);
         imagemComZoom.setPivotY(0f);
 
@@ -74,6 +71,8 @@ public class ImageAnimation {
             }
         });
         set.start();
+        miniatura.setAlpha(0f);
+        imagemComZoom.setVisibility(View.VISIBLE);
         mCurrentAnimator = set;
 
         final float startScaleFinal = startScale;

@@ -2,12 +2,13 @@ package br.com.ismael.app.movaction;
 
 import android.app.Application;
 
-import br.com.ismael.app.movaction.services.components.DaggerServicesComponent;
-import br.com.ismael.app.movaction.services.components.ServicesComponent;
+import br.com.ismael.app.movaction.components.AppComponent;
+import br.com.ismael.app.movaction.components.DaggerAppComponent;
+import br.com.ismael.app.movaction.modules.RepositoriesModule;
 import br.com.ismael.app.movaction.singletons.ConfigurationsProperties;
 
 public class MainApplication extends Application {
-    private static ServicesComponent servicesComponent;
+    private static AppComponent appComponent;
 
     @Override
     public void onCreate() {
@@ -17,10 +18,12 @@ public class MainApplication extends Application {
     }
 
     private void initDagger() {
-        servicesComponent = DaggerServicesComponent.builder().build();
+        appComponent = DaggerAppComponent.builder()
+                .repositoriesModule(new RepositoriesModule(this))
+                .build();
     }
 
-    public static ServicesComponent getServicesComponent() {
-        return servicesComponent;
+    public static AppComponent getAppComponent() {
+        return appComponent;
     }
 }

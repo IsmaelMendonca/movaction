@@ -8,6 +8,7 @@
     <string name="tv_data_lancamento_label">Data de Lançamento:</string>
     <string name="iv_painel">Painel</string>
     <string name="tv_duracao_label">Duração:</string>
-    <string name="tv_genero_label">Gêneros:</string>
-    <string name="tv_resumo_label">Resumo:</string>
+    <string name="tv_genero_label">Gênero:</string>
+    <string name="tv_resumo_label">Sinopse:</string>
+    <string name="iv_toolbar_star">Favorito</string>
 </resources>

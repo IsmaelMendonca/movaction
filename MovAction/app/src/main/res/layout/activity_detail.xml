@@ -8,7 +8,7 @@
     android:background="@color/backgroundColor"
     tools:context=".activities.DetailActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,7 +22,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:titleMarginStart="24dp"
             app:title="@string/nome_app"
-            app:titleTextColor="@color/colorAccent" />
+            app:titleTextColor="@color/colorAccent">
+        </androidx.appcompat.widget.Toolbar>
+
+        <ImageView
+            android:id="@+id/iv_detalhe_favorito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/iv_toolbar_star"
+            app:layout_constraintBottom_toTopOf="@+id/iv_painel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/detail_toolbar" />
 
         <ImageView
             android:id="@+id/iv_painel"
@@ -114,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/tv_duracao_label"
+            android:text="@string/tv_genero_label"
             android:textColor="@color/textColor"
             android:textStyle="bold"
             android:visibility="invisible"
@@ -160,5 +173,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_detalhe_resumo_label" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

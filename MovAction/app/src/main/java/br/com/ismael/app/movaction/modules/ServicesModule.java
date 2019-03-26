@@ -1,4 +1,4 @@
-package br.com.ismael.app.movaction.services.modules;
+package br.com.ismael.app.movaction.modules;
 
 
 import br.com.ismael.app.movaction.services.ApiService;

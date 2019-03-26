@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        MainApplication.getServicesComponent().inject(this);
+        MainApplication.getAppComponent().inject(this);
 
         PermissoesService permissoesService = new PermissoesService(getApplicationContext(), this);
         permissoesService.obterPermissao(INTERNET_PERMISSION_CODE);
@@ -131,5 +131,17 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPostResume() {
+        if(mFilmes.getAdapter() == null)
+        {
+            super.onPostResume();
+            return;
+        }
+
+        mFilmes.getAdapter().notifyDataSetChanged();
+        super.onPostResume();
     }
 }

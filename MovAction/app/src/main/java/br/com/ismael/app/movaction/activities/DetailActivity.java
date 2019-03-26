@@ -18,11 +18,17 @@ import br.com.ismael.app.movaction.enums.PainelSizeEnum;
 import br.com.ismael.app.movaction.enums.PosterSizeEnum;
 import br.com.ismael.app.movaction.models.DetalheFilme;
 import br.com.ismael.app.movaction.models.Genero;
+import br.com.ismael.app.movaction.repositories.access.FilmeFavoritoAccessAsyncTask;
+import br.com.ismael.app.movaction.repositories.access.FilmeFavoritoResult;
+import br.com.ismael.app.movaction.repositories.contracts.IAppRepository;
+import br.com.ismael.app.movaction.repositories.entities.FilmeFavorito;
+import br.com.ismael.app.movaction.repositories.enums.FilmeFavoritoEnum;
 import br.com.ismael.app.movaction.services.callbacks.GenericCallback;
 import br.com.ismael.app.movaction.services.contracts.IFilmesService;
 import br.com.ismael.app.movaction.services.contracts.IImagemService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -33,6 +39,9 @@ public class DetailActivity extends BaseActivity {
 
     @BindView(R.id.iv_painel)
     ImageView mPainel;
+
+    @BindView(R.id.iv_detalhe_favorito)
+    ImageView mFavorito;
 
     @BindView(R.id.tv_titulo_filme)
     TextView mTituloFilme;
@@ -70,7 +79,12 @@ public class DetailActivity extends BaseActivity {
     @Inject
     IFilmesService mFilmesService;
 
+    @Inject
+    IAppRepository mAppRepository;
+
     DetalheFilme mFilme;
+
+    FilmeFavorito mFilmeFavorito;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +97,7 @@ public class DetailActivity extends BaseActivity {
     private void init() {
         ButterKnife.bind(this);
 
-        MainApplication.getServicesComponent().inject(this);
+        MainApplication.getAppComponent().inject(this);
 
         detalharFilme();
 
@@ -133,6 +147,8 @@ public class DetailActivity extends BaseActivity {
                 mGenero.setText(generoBuilder.toString());
                 mResumo.setText(mFilme.getResumo());
 
+                verificarFavorito();
+
                 mDataLancamentoLabel.setVisibility(View.VISIBLE);
                 mGeneroLabel.setVisibility(View.VISIBLE);
                 mDuracaoLabel.setVisibility(View.VISIBLE);
@@ -147,5 +163,65 @@ public class DetailActivity extends BaseActivity {
                 closeDialog();
             }
         });
+    }
+
+    private void verificarFavorito() {
+        FilmeFavorito filmeFavorito = new FilmeFavorito(mFilme.getId());
+
+        FilmeFavoritoAccessAsyncTask asyncTask = new FilmeFavoritoAccessAsyncTask(
+                mAppRepository.getDB().filmeFavoritoDao(),
+                filmeFavorito,
+                resposta -> {
+                    if(resposta == null)
+                        return;
+
+                    FilmeFavoritoResult resultado = (FilmeFavoritoResult)resposta;
+
+                    if(resposta instanceof FilmeFavoritoResult) {
+                        resultado = (FilmeFavoritoResult) resposta;
+                    }
+
+                    mFilmeFavorito = resultado.getFilmeFavorito();
+
+                    if(mFilmeFavorito == null) {
+                        mFavorito.setImageResource(R.drawable.ic_star_border);
+                    } else {
+                        mFavorito.setImageResource(R.drawable.ic_star);
+                    }
+                });
+
+        asyncTask.execute(FilmeFavoritoEnum.findByFilmeId);
+    }
+
+    @OnClick(R.id.iv_detalhe_favorito)
+    public void marcarFavorito() {
+
+        if(mFilmeFavorito == null) {
+            FilmeFavorito filme = new FilmeFavorito();
+            filme.nomeFilme = mFilme.getTitulo();
+            filme.idFilme = mFilme.getId();
+
+            new FilmeFavoritoAccessAsyncTask(
+                    mAppRepository.getDB().filmeFavoritoDao(),
+                    filme,
+                    resposta -> {
+                        if(resposta == null)
+                            return;
+
+                        mFavorito.setImageResource(R.drawable.ic_star);
+                    }).execute(FilmeFavoritoEnum.insert);
+        } else {
+            new FilmeFavoritoAccessAsyncTask(
+                    mAppRepository.getDB().filmeFavoritoDao(),
+                    mFilmeFavorito,
+                    resposta -> {
+                        if(resposta == null)
+                            return;
+
+                        mFavorito.setImageResource(R.drawable.ic_star_border);
+                    }).execute(FilmeFavoritoEnum.delete);
+        }
+
+        verificarFavorito();
     }
 }

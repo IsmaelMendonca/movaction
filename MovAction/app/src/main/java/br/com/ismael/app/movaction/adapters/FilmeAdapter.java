@@ -22,6 +22,11 @@ import br.com.ismael.app.movaction.activities.DetailActivity;
 import br.com.ismael.app.movaction.animations.ImageAnimation;
 import br.com.ismael.app.movaction.enums.PosterSizeEnum;
 import br.com.ismael.app.movaction.models.FilmePopular;
+import br.com.ismael.app.movaction.repositories.access.FilmeFavoritoAccessAsyncTask;
+import br.com.ismael.app.movaction.repositories.access.FilmeFavoritoResult;
+import br.com.ismael.app.movaction.repositories.contracts.IAppRepository;
+import br.com.ismael.app.movaction.repositories.entities.FilmeFavorito;
+import br.com.ismael.app.movaction.repositories.enums.FilmeFavoritoEnum;
 import br.com.ismael.app.movaction.services.contracts.IImagemService;
 import br.com.ismael.app.movaction.transformations.CircleTransformation;
 import butterknife.BindView;
@@ -35,11 +40,14 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
     @Inject
     IImagemService mImagemService;
 
+    @Inject
+    IAppRepository mAppRepository;
+
     public FilmeAdapter(List<FilmePopular> filmeList, View containerView, Context context) {
         mFilmeList = filmeList;
         mContext = context;
         mContainerView = containerView;
-        MainApplication.getServicesComponent().inject(this);
+        MainApplication.getAppComponent().inject(this);
     }
 
     @NonNull
@@ -67,6 +75,8 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
                 PosterSizeEnum.w154,
                 new CircleTransformation());
 
+        verificarFavorito(holder, filmePopular);
+
         holder.mIvPoster.setTag(filmePopular);
         holder.mCvFilmes.setTag(filmePopular);
 
@@ -91,6 +101,33 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
         return mFilmeList.size();
     }
 
+    private void verificarFavorito(final FilmeItemHolder holder, final FilmePopular filmePopular) {
+
+        FilmeFavorito filmeFavorito = new FilmeFavorito(filmePopular.getId());
+
+        FilmeFavoritoAccessAsyncTask asyncTask = new FilmeFavoritoAccessAsyncTask(
+                mAppRepository.getDB().filmeFavoritoDao(),
+                filmeFavorito,
+                resposta -> {
+                    if(resposta == null)
+                        return;
+
+                    FilmeFavoritoResult resultado = (FilmeFavoritoResult)resposta;
+
+                    if(resposta instanceof FilmeFavoritoResult) {
+                        resultado = (FilmeFavoritoResult) resposta;
+                    }
+
+                    if(resultado.getFilmeFavorito() == null) {
+                        holder.mIvFavorito.setImageResource(R.drawable.ic_star_border);
+                    } else {
+                        holder.mIvFavorito.setImageResource(R.drawable.ic_star);
+                    }
+                });
+
+        asyncTask.execute(FilmeFavoritoEnum.findByFilmeId);
+    }
+
     class FilmeItemHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tv_titulo_filme)
@@ -104,6 +141,9 @@ public class FilmeAdapter extends RecyclerView.Adapter<FilmeAdapter.FilmeItemHol
 
         @BindView(R.id.cv_filmes)
         CardView mCvFilmes;
+
+        @BindView(R.id.iv_favorito)
+        ImageView mIvFavorito;
 
         FilmeItemHolder (View view) {
             super(view);
